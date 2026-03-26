@@ -2,7 +2,7 @@
   "dataset_name": "TBL Spatial Combined",
   "n_cells": 655758,
   "n_celltypes": 28,
-  "cell_types": ["Blood Endothelial", "cDC1", "cDC2", "CXCL9⁺ inflammatory moDC", "Cycling cells", "Cytotoxic T/NKT", "DCSTAMP⁺ fusion macrophages", "Fibroblasts", "Follicular B cells", "FOLR2⁺ resident macrophages", "Germinal B cells", "IFN-stimulated T cells", "LAMP3 DC", "Lymphatic Endothelial", "Mast cells", "Memory B cells", "migratory LC, inflammatory LC", "Naïve B cells", "Naive T cells", "Neuron Tonsil cells", "NK cells", "pDC", "Plasma cells", "SPP1 remodeling macrophages", "Th17", "TIMD4⁺ resident macrophages", "Treg", "Type I IFN macrophages"],
+  "cell_types": ["Blood Endothelial", "cDC1", "cDC2", "CXCL9⁺ inflammatory moDC", "Cycling cells", "Cytotoxic T/NKT", "DCSTAMP⁺ fusion macrophages", "Fibroblasts", "Follicular B cells", "Follicular DCs", "FOLR2⁺ resident macrophages", "Germinal B cells", "IFN-stimulated T cells", "LAMP3 DC", "Lymphatic Endothelial", "Mast cells", "Memory B cells", "migratory LC, inflammatory LC", "Naïve B cells", "Naive T cells", "NK cells", "pDC", "Plasma cells", "SPP1 remodeling macrophages", "Th17", "TIMD4⁺ resident macrophages", "Treg", "Type I IFN macrophages"],
   "n_genes": 500,
   "has_polygons": true,
   "has_proteins": false,
@@ -17,7 +17,7 @@
   "annotations": {
     "celltype": {
       "label": "predicted.id",
-      "cell_types": ["Blood Endothelial", "cDC1", "cDC2", "CXCL9⁺ inflammatory moDC", "Cycling cells", "Cytotoxic T/NKT", "DCSTAMP⁺ fusion macrophages", "Fibroblasts", "Follicular B cells", "FOLR2⁺ resident macrophages", "Germinal B cells", "IFN-stimulated T cells", "LAMP3 DC", "Lymphatic Endothelial", "Mast cells", "Memory B cells", "migratory LC, inflammatory LC", "Naïve B cells", "Naive T cells", "Neuron Tonsil cells", "NK cells", "pDC", "Plasma cells", "SPP1 remodeling macrophages", "Th17", "TIMD4⁺ resident macrophages", "Treg", "Type I IFN macrophages"],
+      "cell_types": ["Blood Endothelial", "cDC1", "cDC2", "CXCL9⁺ inflammatory moDC", "Cycling cells", "Cytotoxic T/NKT", "DCSTAMP⁺ fusion macrophages", "Fibroblasts", "Follicular B cells", "Follicular DCs", "FOLR2⁺ resident macrophages", "Germinal B cells", "IFN-stimulated T cells", "LAMP3 DC", "Lymphatic Endothelial", "Mast cells", "Memory B cells", "migratory LC, inflammatory LC", "Naïve B cells", "Naive T cells", "NK cells", "pDC", "Plasma cells", "SPP1 remodeling macrophages", "Th17", "TIMD4⁺ resident macrophages", "Treg", "Type I IFN macrophages"],
       "n_celltypes": 28
     },
     "dataset": {
