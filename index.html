@@ -408,18 +408,51 @@ let polygonData = null;    // Array of {polygon: [[x,y],...], index: i}
 let captureScreenshot = false; // flag for screenshot capture
 
 // ============================================================================
-// Default 28-color palette (distinguishable)
+// Default cell type colors
 // ============================================================================
-const DEFAULT_PALETTE = [
-  [230, 25, 75],   [60, 180, 75],   [255, 225, 25],  [0, 130, 200],
-  [245, 130, 48],  [145, 30, 180],  [70, 240, 240],  [240, 50, 230],
-  [210, 245, 60],  [250, 190, 212], [0, 128, 128],   [220, 190, 255],
-  [170, 110, 40],  [255, 250, 200], [128, 0, 0],     [170, 255, 195],
-  [128, 128, 0],   [255, 215, 180], [0, 0, 128],     [128, 128, 128],
-  [230, 190, 255], [255, 127, 80],  [100, 149, 237], [144, 238, 144],
-  [255, 182, 193], [218, 165, 32],  [72, 209, 204],  [255, 99, 71],
-  [147, 112, 219], [60, 179, 113],  [255, 165, 0],   [106, 90, 205]
-];
+const CELLTYPE_COLOR_OVERRIDES = {
+  'DCSTAMP fusion macrophages': [255, 64, 156],
+  'Th17': [184, 214, 34],
+  'Fibroblasts': [186, 178, 168]
+};
+
+function hslToRgb(h, s, l) {
+  const sat = s / 100;
+  const light = l / 100;
+  const c = (1 - Math.abs(2 * light - 1)) * sat;
+  const hh = h / 60;
+  const x = c * (1 - Math.abs((hh % 2) - 1));
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+  if (hh >= 0 && hh < 1) [r, g, b] = [c, x, 0];
+  else if (hh < 2) [r, g, b] = [x, c, 0];
+  else if (hh < 3) [r, g, b] = [0, c, x];
+  else if (hh < 4) [r, g, b] = [0, x, c];
+  else if (hh < 5) [r, g, b] = [x, 0, c];
+  else [r, g, b] = [c, 0, x];
+
+  const m = light - c / 2;
+  return [
+    Math.round((r + m) * 255),
+    Math.round((g + m) * 255),
+    Math.round((b + m) * 255)
+  ];
+}
+
+function getDefaultCelltypeColor(celltype, index) {
+  if (CELLTYPE_COLOR_OVERRIDES[celltype]) {
+    return CELLTYPE_COLOR_OVERRIDES[celltype];
+  }
+
+  // Golden-angle palette with alternating saturation/lightness keeps adjacent
+  // assignments farther apart than the older fixed palette.
+  const hue = (index * 137.508 + 18) % 360;
+  const saturation = [82, 74, 88, 68][index % 4];
+  const lightness = [50, 58, 44, 62][index % 4];
+  return hslToRgb(hue, saturation, lightness);
+}
 
 // Colormaps (10 stops each for interpolation)
 const COLORMAPS = {
@@ -454,7 +487,7 @@ const COLORMAPS = {
 const VIRIDIS = COLORMAPS.viridis;
 
 let currentColormap = 'viridis';
-const COLOR_PREF_KEY = 'spatial_viewer_colors_spatialdim_v2';
+const COLOR_PREF_KEY = 'spatial_viewer_colors_spatialdim_v3';
 const COLORMAP_PREF_KEY = 'spatial_viewer_colormap_spatialdim_v1';
 const BG_PREF_KEY = 'spatial_viewer_bg_spatialdim_v1';
 
@@ -575,7 +608,7 @@ function loadColorPreferences() {
     if (savedObj[ct]) {
       celltypeColors[ct] = savedObj[ct];
     } else {
-      celltypeColors[ct] = DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
+      celltypeColors[ct] = getDefaultCelltypeColor(ct, i);
     }
     celltypeVisible[ct] = true;
   });
@@ -710,7 +743,7 @@ function switchAnnotation(key) {
   celltypeColors = {};
   celltypeVisible = {};
   metadata.cell_types.forEach((ct, i) => {
-    celltypeColors[ct] = savedObj[ct] || DEFAULT_PALETTE[i % DEFAULT_PALETTE.length];
+    celltypeColors[ct] = savedObj[ct] || getDefaultCelltypeColor(ct, i);
     celltypeVisible[ct] = true;
   });
   // Rebuild UI and re-render
