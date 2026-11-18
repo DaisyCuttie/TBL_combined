@@ -410,11 +410,44 @@ let captureScreenshot = false; // flag for screenshot capture
 // ============================================================================
 // Default cell type colors
 // ============================================================================
+// Subtype colours from Spatial_Color.xlsx (same palette as the SpatialDimPlot
+// figures for TBL24.1-24.4). Mast cells is not in the xlsx; it uses the
+// fallback hue the R scripts give it (scales::hue_pal()(1) = #F8766D).
 const CELLTYPE_COLOR_OVERRIDES = {
-  'DCSTAMP fusion macrophages': [255, 64, 156],
-  'Th17': [184, 214, 34],
-  'Fibroblasts': [186, 178, 168]
+  'Naive T cells': '#E1FFBD',
+  'Treg': '#D39388',
+  'Th17': '#DAA520',
+  'IFN-stimulated T cells': '#C8C7FF',
+  'Cytotoxic T/NKT': '#911EB4',
+  'NK cells': '#FF7F50',
+  'Naïve B cells': '#808080',
+  'Follicular B cells': '#3DF59F',
+  'Germinal B cells': '#DCBEFF',
+  'Memory B cells': '#FFD7B4',
+  'Plasma cells': '#4C704C',
+  'Cycling cells': '#6D487A',
+  'Blood Endothelial': '#AACFAF',
+  'Lymphatic Endothelial': '#556F91',
+  'Fibroblasts': '#F032E6',
+  'cDC1': '#0082C8',
+  'Follicular DCs': '#FABED4',
+  'LAMP3 DC': '#800000',
+  'Migratory LC-like DCs': '#000080',
+  'pDC': '#6495ED',
+  'Activated inflammatory monocytes/macrophages': '#E6194B',
+  'CCL18 lipid resident macrophages': '#FFE119',
+  'DCSTAMP fusion macrophages': '#46F0F0',
+  'FOLR2 interstitial macrophages': '#008080',
+  'IFN-inflammatory monocytes/macrophages': '#28A948',
+  'SPP1 remodeling macrophages': '#FFB6C1',
+  'TIMD4 resident macrophages': '#48D1CC',
+  'Mast cells': '#F8766D'
 };
+
+function hexToRgb(hex) {
+  const v = parseInt(hex.slice(1), 16);
+  return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+}
 
 function hslToRgb(h, s, l) {
   const sat = s / 100;
@@ -443,7 +476,7 @@ function hslToRgb(h, s, l) {
 
 function getDefaultCelltypeColor(celltype, index) {
   if (CELLTYPE_COLOR_OVERRIDES[celltype]) {
-    return CELLTYPE_COLOR_OVERRIDES[celltype];
+    return hexToRgb(CELLTYPE_COLOR_OVERRIDES[celltype]);
   }
 
   // Golden-angle palette with alternating saturation/lightness keeps adjacent
@@ -487,7 +520,7 @@ const COLORMAPS = {
 const VIRIDIS = COLORMAPS.viridis;
 
 let currentColormap = 'viridis';
-const COLOR_PREF_KEY = 'spatial_viewer_colors_spatialdim_v3';
+const COLOR_PREF_KEY = 'spatial_viewer_colors_spatialdim_v4';
 const COLORMAP_PREF_KEY = 'spatial_viewer_colormap_spatialdim_v1';
 const BG_PREF_KEY = 'spatial_viewer_bg_spatialdim_v1';
 
@@ -1135,6 +1168,12 @@ async function loadGene(geneName) {
   try {
     const resp = await fetch(`data/genes/${filename}`);
     const sparse = await resp.json();
+
+    // Gene files store idx as gaps between consecutive cell indices
+    // ("delta": true) to keep the site under the GitHub Pages size limit.
+    if (sparse.delta) {
+      for (let j = 1; j < sparse.idx.length; j++) sparse.idx[j] += sparse.idx[j - 1];
+    }
 
     // Expand sparse to dense
     const N = sparse.n;
